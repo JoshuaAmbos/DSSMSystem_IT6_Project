@@ -87,13 +87,11 @@ class SampleDataSeeder extends Seeder
 
             if ($items->isEmpty()) continue;
 
-            $total = $items->sum('price');
-
             $transaction = Transaction::create([
                 'user_id' => $txnData['cashier_id'],
                 'transaction_number' => Transaction::generateTransactionNumber(),
-                'subtotal' => $total,
-                'total_amount' => $total,
+                'subtotal' => 0,
+                'total_amount' => 0,
                 'method_id' => $txnData['method_id'],
             ]);
 
