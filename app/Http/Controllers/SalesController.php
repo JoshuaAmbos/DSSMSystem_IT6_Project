@@ -19,7 +19,6 @@ class SalesController extends Controller
 
     public function create()
     {
-        // Removed 'status' relationship from eager loading
         $items = Item::where('is_sold', false)
             ->with(['category', 'bale'])
             ->get()
@@ -51,30 +50,31 @@ class SalesController extends Controller
                         throw new \Exception("Item {$item->item_code} is already sold.");
                     }
 
-                    // In One Row = One Item, quantity is always 1
+                    // One Row = One Item, 
+                    // quantity is always 1
                     $totalTransactionAmount += $item->price;
 
                     $transactionItems[$item->id] = [
                         'quantity' => 1,
                         'unit_price' => $item->price,
-                        'subtotal' => $item->price, 
+                        'subtotal' => $item->price,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
 
-                    // Trigger 'after_sale_sync' handles setting is_sold = 1 and quantity = 0
+                    // Trigger handles setting is_sold = 1 and quantity = 0
                 }
 
                 $transaction = Transaction::create([
                     'user_id' => auth()->id(),
                     'transaction_number' => Transaction::generateTransactionNumber(),
-                    'subtotal' => $totalTransactionAmount,
-                    'total_amount' => $totalTransactionAmount,
+                    'subtotal' => 0, // trigger handles this
+                    'total_amount' => 0, // trigger handles this too
                     'method_id' => $validated['method_id'],
                     'notes' => $validated['notes'] ?? null,
                 ]);
 
-                // This attach() fires the database triggers
+                // fire trigger
                 $transaction->items()->attach($transactionItems);
 
                 return $transaction;

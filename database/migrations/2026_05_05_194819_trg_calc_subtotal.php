@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::unprepared('DROP TRIGGER IF EXISTS trg_calc_subtotal');
         DB::unprepared('
             CREATE TRIGGER trg_calc_subtotal
             BEFORE INSERT ON transaction_items
