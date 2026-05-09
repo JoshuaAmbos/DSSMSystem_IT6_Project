@@ -155,6 +155,16 @@
                 </li>
 
                 <li class="nav-item mt-3 mb-1 px-3">
+                    <span class="text-uppercase text-white-50 small fw-bold" style="font-size: 0.7rem;">Reports</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('reports.daily-sales') ? 'active' : '' }}" 
+                    href="{{ route('reports.daily-sales') }}">
+                        <i class="bi bi-graph-up me-2"></i> Daily Sales
+                    </a>
+                </li>
+
+                <li class="nav-item mt-3 mb-1 px-3">
                     <span class="text-uppercase text-white-50 small fw-bold" style="font-size: 0.7rem;">Operations</span>
                 </li>
                 <li class="nav-item">
@@ -167,6 +177,8 @@
                         <i class="bi bi-wallet2 me-2"></i> Payment Methods
                     </a>
                 </li>
+
+                 
             </ul>
 
             <div class="mt-auto pt-3 border-top border-secondary">
