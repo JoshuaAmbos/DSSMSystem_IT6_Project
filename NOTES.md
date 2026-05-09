@@ -29,3 +29,20 @@ CRUD for every entity
 Interface for that CRUD (for each entity also)
 Normalization
 Implement the Triggers and Views in the backend
+
+# April 27, 2026
+
+Bale = include desc, and other attributes  
+Separate Items into a new Interface
+Redesign delete confirmation pop-up
+
+---
+
+# CHECKLIST
+Transaction triggers - DONE
+Supplier triggers - DONE
+Daily Summary View
+Current Active Inventory View
+Daily Transaction Receipt View
+
+

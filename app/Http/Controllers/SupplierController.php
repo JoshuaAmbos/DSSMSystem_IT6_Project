@@ -21,6 +21,7 @@ class SupplierController extends Controller
 
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',

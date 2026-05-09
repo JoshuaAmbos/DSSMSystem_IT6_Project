@@ -20,10 +20,13 @@ class SalesController extends Controller
     public function create()
     {
         $items = Item::where('is_sold', false)
-            ->with(['category', 'status', 'bale'])
+            ->with(['category', 'bale'])
             ->get()
             ->groupBy('category.name');
-        return view('sales.create', compact('items'));
+        
+        $paymentMethods = DB::table('payment_methods')->get();
+        
+        return view('sales.create', compact('items', 'paymentMethods'));
     }
 
     public function store(Request $request)
@@ -31,71 +34,74 @@ class SalesController extends Controller
         $validated = $request->validate([
             'items' => 'required|array|min:1',
             'items.*.item_id' => 'required|exists:items,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'payment_method' => 'required|in:cash,gcash,card,mixed',
+            'method_id' => 'required|exists:payment_methods,id', 
             'notes' => 'nullable|string',
         ]);
 
-        $transaction = DB::transaction(function () use ($request, $validated) {
-            $subtotal = 0;
-            $transactionItems = [];
+        try {
+            $transaction = DB::transaction(function () use ($validated) {
+                $totalTransactionAmount = 0;
+                $transactionItems = [];
 
-            foreach ($validated['items'] as $itemData) {
-                $item = Item::findOrFail($itemData['item_id']);
-                $quantity = $itemData['quantity'];
-                $unitPrice = $item->price;
-                $itemSubtotal = $unitPrice * $quantity;
+                foreach ($validated['items'] as $itemData) {
+                    $item = Item::lockForUpdate()->findOrFail($itemData['item_id']);
+                    
+                    if ($item->is_sold) {
+                        throw new \Exception("Item {$item->item_code} is already sold.");
+                    }
 
-                $subtotal += $itemSubtotal;
+                    // One Row = One Item, 
+                    // quantity is always 1
+                    $totalTransactionAmount += $item->price;
 
-                $transactionItems[] = [
-                    'item_id' => $item->id,
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
-                    'subtotal' => $itemSubtotal,
-                ];
+                    $transactionItems[$item->id] = [
+                        'quantity' => 1,
+                        'unit_price' => $item->price,
+                        'subtotal' => $item->price,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
 
-                $item->update([
-                    'is_sold' => true,
+                    // Trigger handles setting is_sold = 1 and quantity = 0
+                }
+
+                $transaction = Transaction::create([
+                    'user_id' => auth()->id(),
+                    'transaction_number' => Transaction::generateTransactionNumber(),
+                    'subtotal' => 0, // trigger handles this
+                    'total_amount' => 0, // trigger handles this too
+                    'method_id' => $validated['method_id'],
+                    'notes' => $validated['notes'] ?? null,
                 ]);
-            }
 
-            $transaction = Transaction::create([
-                'user_id' => auth()->id(),
-                'transaction_number' => Transaction::generateTransactionNumber(),
-                'subtotal' => $subtotal,
-                'total_amount' => $subtotal,
-                'payment_method' => $validated['payment_method'],
-                'notes' => $validated['notes'] ?? null,
-            ]);
+                // fire trigger
+                $transaction->items()->attach($transactionItems);
 
-            foreach ($transactionItems as $ti) {
-                $transaction->items()->attach($ti['item_id'], [
-                    'quantity' => $ti['quantity'],
-                    'unit_price' => $ti['unit_price'],
-                    'subtotal' => $ti['subtotal'],
-                ]);
-            }
+                return $transaction;
+            });
 
-            return $transaction;
-        });
+            return redirect()->route('sales.show', $transaction->id)
+                ->with('success', 'Transaction completed successfully.');
 
-        return redirect()->route('sales.show', $transaction->id)
-            ->with('success', 'Transaction completed successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 
     public function show($id)
     {
-        $transaction = Transaction::findOrFail($id); 
+        // Removed 'status' relationship from eager loading
+        $transaction = Transaction::with(['user', 'items.category', 'paymentMethod'])
+            ->findOrFail($id); 
 
-        $transaction->load(['user', 'items.category', 'items.status']);
         return view('sales.show', compact('transaction'));
     }
 
     public function getAvailableItems()
     {
+        // Removed 'status' relationship
         $items = Item::where('is_sold', false)
-            ->with(['category', 'status', 'bale'])
+            ->with(['category', 'bale'])
             ->get();
         return response()->json($items);
     }
