@@ -174,9 +174,9 @@
                     <span class="text-uppercase text-white-50 small fw-bold" style="font-size: 0.7rem;">Reports</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}"
-                        href="{{ route('reports.index') }}">
-                        <i class="bi bi-graph-up me-2"></i> Reports
+                    <a class="nav-link {{ request()->routeIs('reports.daily-sales-summary') ? 'active' : '' }}"
+                        href="{{ route('reports.daily-sales-summary') }}">
+                        <i class="bi bi-graph-up me-2"></i> Daily Sales
                     </a>
                 </li>
 
