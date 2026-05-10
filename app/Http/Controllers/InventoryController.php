@@ -4,50 +4,47 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\CurrentActiveInventory;
+use App\Models\CurrentInactiveInventory;
+
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
     public function index(Request $request)
     {
-        // Removed 'status' from eager loading as the relationship no longer exists
-        $query = Item::with(['category', 'bale.supplier']);
+        $filter = $request->query('filter', 'all');
 
-        // Filter by Category
+        $query = match($filter) {
+            'active' => CurrentActiveInventory::query(),
+            'inactive' => CurrentInactiveInventory::query(),
+            default => Item::with(['category', 'bale']),
+        };
+
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
-        // Simplified Status Filtering
-        // Since status_id is gone, we only filter by the is_sold boolean
-        if ($request->filled('status')) {
-            if ($request->status === 'sold') {
-                $query->where('is_sold', true);
-            } elseif ($request->status === 'available') {
-                $query->where('is_sold', false);
-            }
-        }
-
         $items = $query->orderByDesc('created_at')->paginate(15);
+
+        $availableCount = CurrentActiveInventory::count();
+        $soldCount = CurrentInactiveInventory::count();
+        $totalCount = Item::count();
         $categories = Category::all();
 
-        // Stats for the top cards
-        $availableCount = Item::where('is_sold', false)->count();
-        $soldCount = Item::where('is_sold', true)->count();
-        $totalCount = Item::count();
-
         return view('inventory.index', compact(
-            'items', 'categories', 
-            'availableCount', 'soldCount', 'totalCount'
+            'items',
+            'categories', 
+            'filter',
+            'availableCount', 
+            'soldCount', 
+            'totalCount'
         ));
     }
 
     public function show($id)
     {
-        $item = Item::findOrFail($id);
-        // Removed 'status' from eager loading
-        $item->load(['category', 'bale.supplier', 'transactions']);
-        
+        $item = Item::with(['category', 'bale.supplier', 'transactions'])->findOrFail($id);
         return view('inventory.show', compact('item'));
     }
 
