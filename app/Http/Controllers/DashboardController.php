@@ -34,12 +34,12 @@ class DashboardController extends Controller
 
         $recentTransactions = Transaction::with('user')
             ->orderByDesc('created_at')
-            ->limit(5)
+            ->limit(4)
             ->get();
 
         $recentBales = \App\Models\Bale::with('supplier')
             ->orderByDesc('created_at')
-            ->limit(5)
+            ->limit(4)
             ->get();
 
         return view('dashboard', compact(
