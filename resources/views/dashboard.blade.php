@@ -30,7 +30,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-muted fw-semibold mb-2 text-uppercase" style="font-size: 0.8rem;">
-                                    Transactions</h6>
+                                    Transactions Today</h6>
                                 <h3 class="mb-0 fw-bold text-dark">{{ $dailyTransactions }}</h3>
                             </div>
                             <div class="fs-1 text-success opacity-75">
@@ -175,7 +175,8 @@
                                         <td class="py-3 fw-semibold text-success">₱{{ number_format($txn->total_amount, 2) }}
                                         </td>
                                         <td class="pe-4 py-3 text-end text-muted small">
-                                            {{ $txn->created_at->format('M d, h:i A') }}</td>
+                                            {{ $txn->created_at->format('M d, h:i A') }}
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
