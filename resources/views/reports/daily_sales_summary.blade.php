@@ -6,9 +6,6 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-dark mb-0">Daily Sales Summary</h2>
-            <a href="{{ route('reports.index') }}" class="btn btn-outline-secondary shadow-sm px-3">
-                <i class="bi bi-arrow-left me-2"></i>Back to Reports
-            </a>
         </div>
 
         <div class="row mb-4 g-3">
@@ -54,9 +51,8 @@
                         <tr>
                             <th class="text-uppercase text-muted small fw-semibold py-3 ps-4">Sales Date</th>
                             <th class="text-uppercase text-muted small fw-semibold py-3 text-center">Transactions</th>
-                            <th class="text-uppercase text-muted small fw-semibold py-3 text-end">Daily Revenue</th>
-                            <th class="text-uppercase text-muted small fw-semibold py-3 text-end">Avg. Per Sale</th>
-                            <th class="text-uppercase text-muted small fw-semibold py-3 text-center pe-4">Action</th>
+                            <th class="text-uppercase text-muted small fw-semibold py-3 text-center">Daily Revenue</th>
+                            <th class="text-uppercase text-muted small fw-semibold py-3 text-center">Avg. Per Sale</th>
                         </tr>
                     </thead>
                     <tbody class="border-top-0">
@@ -74,17 +70,11 @@
                                         {{ $day->total_transactions }} txns
                                     </span>
                                 </td>
-                                <td class="py-3 text-end fw-bold text-success">
+                                <td class="py-3 text-center fw-bold text-success">
                                     ₱{{ number_format($day->daily_revenue, 2) }}
                                 </td>
-                                <td class="py-3 text-end text-muted">
+                                <td class="py-3 text-center text-muted">
                                     ₱{{ number_format($day->avg_transaction_value, 2) }}
-                                </td>
-                                <td class="py-3 text-center pe-4">
-                                    <a href="{{ route('reports.index', ['date' => $day->sales_date]) }}"
-                                        class="btn btn-sm btn-light border shadow-sm" title="View Full Day Report">
-                                        <i class="bi bi-eye text-primary"></i>
-                                    </a>
                                 </td>
                             </tr>
                         @empty
