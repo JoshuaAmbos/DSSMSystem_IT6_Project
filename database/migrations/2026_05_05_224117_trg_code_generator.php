@@ -23,7 +23,7 @@ return new class extends Migration
             END
         ");
 
-        // ITEM code generator
+        // ITEM code generator - BEFORE INSERT
         DB::unprepared("DROP TRIGGER IF EXISTS before_item_insert_generate_code");
         DB::unprepared("
             CREATE TRIGGER before_item_insert_generate_code
@@ -46,6 +46,33 @@ return new class extends Migration
                 SET NEW.item_code = CONCAT(cat_prefix, '-', LPAD(next_num, 3, '0'));
             END
         ");
+
+        // ITEM code generator - BEFORE UPDATE
+        DB::unprepared("DROP TRIGGER IF EXISTS before_item_update_generate_code");
+        DB::unprepared("
+            CREATE TRIGGER before_item_update_generate_code
+            BEFORE UPDATE ON items
+            FOR EACH ROW
+            BEGIN
+                DECLARE cat_prefix VARCHAR(10);
+                DECLARE next_num INT;
+                
+                -- ONLY run this if the category is being changed
+                IF OLD.category_id <> NEW.category_id THEN
+                    
+                    SELECT UPPER(LEFT(name, 3)) INTO cat_prefix 
+                    FROM categories 
+                    WHERE id = NEW.category_id;
+                    
+                    SELECT COALESCE(MAX(CAST(SUBSTRING_INDEX(item_code, '-', -1) AS UNSIGNED)), 0) + 1 
+                    INTO next_num 
+                    FROM items 
+                    WHERE category_id = NEW.category_id;
+                    
+                    SET NEW.item_code = CONCAT(cat_prefix, '-', LPAD(next_num, 3, '0'));
+                END IF;
+            END
+        ");
     }
 
     /**
@@ -55,5 +82,6 @@ return new class extends Migration
     {
         DB::unprepared("DROP TRIGGER IF EXISTS before_bale_insert_generate_code");
         DB::unprepared("DROP TRIGGER IF EXISTS before_item_insert_generate_code");
+        DB::unprepared("DROP TRIGGER IF EXISTS before_item_update_generate_code");
     }
 };
