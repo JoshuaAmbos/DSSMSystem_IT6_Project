@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("DROP VIEW IF EXISTS transaction_receipts_view");
-        DB::statement("
-            CREATE VIEW transaction_receipts_view AS
+        DB::unprepared("DROP VIEW IF EXISTS v_transaction_receipts");
+        DB::unprepared("
+            CREATE VIEW v_transaction_receipts AS
             SELECT 
                 t.id AS transaction_id,
                 t.transaction_number,
@@ -31,6 +31,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("DROP VIEW IF EXISTS transaction_receipts_view");
+        DB::unprepared("DROP VIEW IF EXISTS v_transaction_receipts");
     }
 };

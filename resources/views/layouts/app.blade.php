@@ -8,7 +8,7 @@
     <title>@yield('title', 'DSSM')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
+
     <style>
         :root {
             --sidebar-width: 260px;
@@ -43,28 +43,36 @@
         /* Desktop Behavior (Large Screens) */
         @media (min-width: 992px) {
             .sidebar {
-                transform: translateX(0); /* Always show */
+                transform: translateX(0);
+                /* Always show */
             }
+
             .main-content {
                 margin-left: var(--sidebar-width);
             }
+
             .sidebar-toggle-btn {
-                display: none; /* Hide toggle on desktop */
+                display: none;
+                /* Hide toggle on desktop */
             }
         }
 
         /* Mobile Behavior (Small/Medium Screens) */
         @media (max-width: 991.98px) {
             .sidebar {
-                transform: translateX(-100%); /* Hide by default */
+                transform: translateX(-100%);
+                /* Hide by default */
             }
+
             .sidebar.show {
-                transform: translateX(0); /* Slide in */
+                transform: translateX(0);
+                /* Slide in */
             }
+
             .main-content {
                 margin-left: 0;
             }
-            
+
             /* The darkened background when sidebar is open */
             .sidebar-overlay {
                 position: fixed;
@@ -78,6 +86,7 @@
                 opacity: 0;
                 transition: opacity 0.3s ease;
             }
+
             .sidebar-overlay.show {
                 display: block;
                 opacity: 1;
@@ -91,11 +100,13 @@
             display: flex;
             align-items: center;
         }
+
         .sidebar .nav-link:hover:not(.bg-primary) {
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
             border-radius: 0.375rem;
         }
+
         .sidebar .nav-link.active {
             background-color: #0d6efd;
             color: #fff;
@@ -121,7 +132,8 @@
 
             <ul class="nav flex-column gap-1 custom-scrollbar" style="overflow-y: auto; flex: 1;">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                        href="{{ route('dashboard') }}">
                         <i class="bi bi-speedometer2 me-2"></i> Dashboard
                     </a>
                 </li>
@@ -130,17 +142,20 @@
                     <span class="text-uppercase text-white-50 small fw-bold" style="font-size: 0.7rem;">Inventory</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">
+                    <a class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}"
+                        href="{{ route('suppliers.index') }}">
                         <i class="bi bi-truck me-2"></i> Suppliers
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('stock-in.*') ? 'active' : '' }}" href="{{ route('stock-in.index') }}">
+                    <a class="nav-link {{ request()->routeIs('stock-in.*') ? 'active' : '' }}"
+                        href="{{ route('stock-in.index') }}">
                         <i class="bi bi-box-seam me-2"></i> Bales and Items
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('inventory.*') ? 'active' : '' }}" href="{{ route('inventory.index') }}">
+                    <a class="nav-link {{ request()->routeIs('inventory.*') ? 'active' : '' }}"
+                        href="{{ route('inventory.index') }}">
                         <i class="bi bi-clipboard-data me-2"></i> Inventory Tracking
                     </a>
                 </li>
@@ -149,7 +164,8 @@
                     <span class="text-uppercase text-white-50 small fw-bold" style="font-size: 0.7rem;">Sales</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('sales.*') ? 'active' : '' }}" href="{{ route('sales.index') }}">
+                    <a class="nav-link {{ request()->routeIs('sales.*') ? 'active' : '' }}"
+                        href="{{ route('sales.index') }}">
                         <i class="bi bi-cart me-2"></i> Transactions
                     </a>
                 </li>
@@ -158,9 +174,9 @@
                     <span class="text-uppercase text-white-50 small fw-bold" style="font-size: 0.7rem;">Reports</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('reports.daily-sales') ? 'active' : '' }}" 
-                    href="{{ route('reports.daily-sales') }}">
-                        <i class="bi bi-graph-up me-2"></i> Daily Sales
+                    <a class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}"
+                        href="{{ route('reports.index') }}">
+                        <i class="bi bi-graph-up me-2"></i> Reports
                     </a>
                 </li>
 
@@ -168,25 +184,29 @@
                     <span class="text-uppercase text-white-50 small fw-bold" style="font-size: 0.7rem;">Operations</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
+                    <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}"
+                        href="{{ route('categories.index') }}">
                         <i class="bi bi-tags me-2"></i> Categories
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('payment_methods.*') ? 'active' : '' }}" href="{{ route('payment_methods.index') }}">
+                    <a class="nav-link {{ request()->routeIs('payment_methods.*') ? 'active' : '' }}"
+                        href="{{ route('payment_methods.index') }}">
                         <i class="bi bi-wallet2 me-2"></i> Payment Methods
                     </a>
                 </li>
 
-                 
+
             </ul>
 
             <div class="mt-auto pt-3 border-top border-secondary">
-                <div class="d-flex align-items-center text-white mb-3 p-2 rounded" style="background: rgba(255,255,255,0.05);">
+                <div class="d-flex align-items-center text-white mb-3 p-2 rounded"
+                    style="background: rgba(255,255,255,0.05);">
                     <i class="bi bi-person-circle fs-3 me-2 text-primary"></i>
                     <div class="lh-sm">
                         <span class="d-block fw-bold" style="font-size: 0.85rem;">{{ auth()->user()->name }}</span>
-                        <small class="text-white-50" style="font-size: 0.75rem;">{{ auth()->user()->employee->position ?? 'Staff' }}</small>
+                        <small class="text-white-50"
+                            style="font-size: 0.75rem;">{{ auth()->user()->employee->position ?? 'Staff' }}</small>
                     </div>
                 </div>
                 <form method="POST" action="{{ route('logout') }}">
@@ -218,9 +238,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             const toggleBtn = document.getElementById('sidebarToggle');
@@ -238,7 +258,7 @@
             if (overlay) overlay.addEventListener('click', handleSidebar);
         });
     </script>
-    
+
     @stack('scripts')
 </body>
 

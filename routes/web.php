@@ -34,10 +34,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('inventory', InventoryController::class);
 
-    Route::get('reports/daily-sales', [ReportsController::class, 'dailySales'])->name('reports.daily-sales');
+    Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
     Route::get('reports/inventory-status', [ReportsController::class, 'inventoryStatus'])->name('reports.inventory-status');
-    Route::get('reports/revenue-analytics', [ReportsController::class, 'revenueAnalytics'])->name('reports.revenue');
+    // Route::get('reports/revenue-analytics', [ReportsController::class, 'revenueAnalytics'])->name('reports.revenue');
 
+    // views
+    Route::get('reports/daily_sales_summary', [ReportsController::class, 'dailySalesSummary'])->name('reports.daily-sales-summary');
+    Route::get('reports/current_active_inventory', [ReportsController::class, 'currentActiveInventory'])->name('reports.current-active-inventory');
     Route::resource('categories', CategoryController::class);
 
     Route::post('/logout', function () {

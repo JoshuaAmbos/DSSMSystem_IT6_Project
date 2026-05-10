@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CurrentActiveInventory;
+use App\Models\DailySalesSummary;
 use App\Models\Item;
 use App\Models\Transaction;
 use App\Models\DailyRevenue;
@@ -15,11 +17,16 @@ use Illuminate\Http\Request;
 
 class ReportsController extends Controller
 {
+    public function index()
+    {
+        return view('reports.index');
+
+    }
     public function dailySales(Request $request)
     {
         $date = $request->input('date', Carbon::today()->toDateString());
 
-        $stats = DailyRevenue::where('sales_date', $date)->first();
+        $stats = DailySalesSummary::where('sales_date', $date)->first();
 
         $transactions = Transaction::with(['user', 'items.category', 'paymentMethod'])
             ->whereDate('created_at', $date)
@@ -28,6 +35,8 @@ class ReportsController extends Controller
 
         $totalSales = $stats->daily_revenue ?? 0;
         $totalTransactions = $stats->total_transactions ?? 0;
+
+        $avgSale = $stats->avg_transaction_value ?? 0;
         
         $totalItemsSold = TransactionItem::whereHas('transaction', function ($query) use ($date) {
             $query->whereDate('created_at', $date);
@@ -76,10 +85,22 @@ class ReportsController extends Controller
 
         return view('reports.receipt', compact('transaction', 'receiptItems'));
     }
-    public function revenueAnalytics()
-    {
-        $revenueData = DailyRevenue::orderBy('sales_date', 'desc')->get();
 
-        return view('reports.revenue_analytics', compact('revenueData'));
+    // v_daily_sales_summary
+    public function dailySalesSummary()
+    {
+        $revenueData = DailySalesSummary::orderBy('sales_date', 'desc')->take(30)->get();
+        return view('reports.daily_sales_summary', compact('revenueData'));
+        
+    }
+
+    // v_current_active_inventory
+    public function currentActiveInventory()
+    {
+        $inventory = CurrentActiveInventory::orderBy('item_code')->paginate(20);
+
+        $totalPotentialValue = CurrentActiveInventory::sum('potential_revenue');
+
+        return view('reports.current_active_inventory', compact('inventory', 'totalPotentialValue'));
     }
 }
