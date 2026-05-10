@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -13,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::unprepared("DROP VIEW IF EXISTS v_current_active_inventory");
+        DB::unprepared("DROP VIEW IF EXISTS v_current_inactive_inventory");
         DB::unprepared("
-            CREATE VIEW v_current_active_inventory AS
+            CREATE VIEW v_current_inactive_inventory AS
             SELECT
                 i.id AS item_id,
                 i.category_id,
@@ -30,8 +28,7 @@ return new class extends Migration
             FROM items i
             JOIN categories c ON i.category_id = c.id
             LEFT JOIN bales b ON i.bale_id = b.id
-            WHERE i.is_sold = 0
-                AND i.quantity > 0;
+            WHERE i.is_sold = 1 OR i.quantity <= 0;
         ");
     }
 
@@ -40,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared("DROP VIEW IF EXISTS v_current_active_inventory");
+        DB::unprepared("DROP VIEW IF EXISTS v_current_inactive_inventory;");
     }
 };
