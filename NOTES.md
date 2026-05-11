@@ -49,4 +49,7 @@ Supplier triggers - DONE
 
 Daily Sales Summary View - DONE
 Current Active Inventory View - DONE
-Daily Transaction Receipt View
+Daily Transaction Receipt View - DONE
+
+## FINAL CHECKING REVISION
+Separate pricing of items from bale stock-in process.

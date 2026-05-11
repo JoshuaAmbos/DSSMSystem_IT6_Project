@@ -79,11 +79,18 @@ class ReportsController extends Controller
         return view('reports.inventory-status', compact('items', 'categorySummary', 'overallStats'));
     }
 
-    public function transactionReceipt(Transaction $transaction)
+    // v_transaction_receipt
+    public function transactionReceipt($id)
     {
-        $receiptItems = TransactionReceipt::where('transaction_id', $transaction->id)->get();
+        $receiptItems = TransactionReceipt::where('transaction_id', $id)->get();
 
-        return view('reports.receipt', compact('transaction', 'receiptItems'));
+        if ($receiptItems->isEmpty()) {
+            abort(404, "Receipt not found.");
+        }
+
+        $transactionHeader = $receiptItems->first();
+
+        return view('reports.receipt', compact('transactionHeader', 'receiptItems'));
     }
 
     // v_daily_sales_summary

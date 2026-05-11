@@ -21,7 +21,7 @@ return new class extends Migration
             BEGIN
                 -- increment the total_items in the bales table
                 UPDATE bales 
-                SET total_items = (SELECT COALESCE(SUM(quantity), 0) FROM items WHERE bale_id = NEW.bale_id)
+                SET total_items = (SELECT COALESCE(COUNT(*), 0) FROM items WHERE bale_id = NEW.bale_id)
                 WHERE id = NEW.bale_id;
             END
         ");
@@ -35,7 +35,7 @@ return new class extends Migration
             BEGIN
                 -- decrement bale total items
                 UPDATE bales
-                SET total_items = (SELECT COALESCE(SUM(quantity), 0) FROM items WHERE bale_id = OLD.bale_id)
+                SET total_items = (SELECT COALESCE(COUNT(*), 0) FROM items WHERE bale_id = OLD.bale_id)
                 WHERE id = OLD.bale_id;
             END
         ");

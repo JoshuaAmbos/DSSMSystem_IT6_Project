@@ -7,7 +7,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // 1. Logic for NEW Items
+        // for NEW Items
         // Ensures every unique item starts as 'Available' (is_sold = 0)
         DB::unprepared('DROP TRIGGER IF EXISTS before_items_insert_default_state');
         DB::unprepared("
@@ -20,7 +20,7 @@ return new class extends Migration
             END
         ");
 
-        // 2. Logic for UPDATED Items
+        // for UPDATED Items
         // Keeps the is_sold boolean and quantity in sync
         DB::unprepared('DROP TRIGGER IF EXISTS auto_update_inventory_state');
         DB::unprepared("
@@ -28,16 +28,16 @@ return new class extends Migration
             BEFORE UPDATE ON items
             FOR EACH ROW
             BEGIN
-                -- If item is marked as sold, force quantity to 0
+                -- if item is marked as sold, quantity = 0
                 IF NEW.is_sold = 1 THEN
                     SET NEW.quantity = 0;
                 
-                -- If quantity is manually set to 0, ensure is_sold is true
+                -- if quantity is manually set to 0, is_sold = true
                 ELSEIF NEW.quantity <= 0 THEN
                     SET NEW.is_sold = 1;
                     SET NEW.quantity = 0;
                 
-                -- If an item is 'returned' or quantity becomes 1 again
+                -- if an item is 'returned' or quantity = 1 again
                 ELSEIF NEW.quantity > 0 THEN
                     SET NEW.is_sold = 0;
                 END IF;

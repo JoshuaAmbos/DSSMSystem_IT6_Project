@@ -27,8 +27,10 @@ class InventoryController extends Controller
 
         $items = $query->orderByDesc('created_at')->paginate(15);
 
+        // inventory views
         $availableCount = CurrentActiveInventory::count();
         $soldCount = CurrentInactiveInventory::count();
+
         $totalCount = Item::count();
         $categories = Category::all();
 
@@ -50,7 +52,6 @@ class InventoryController extends Controller
 
     public function getInventoryByCategory()
     {
-        // This is useful for dashboard charts
         $inventory = Category::withCount(['items' => function ($query) {
             $query->where('is_sold', false);
         }])->get();

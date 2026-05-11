@@ -90,7 +90,7 @@ class SalesController extends Controller
 
     public function show($id)
     {
-        // Removed 'status' relationship from eager loading
+        // Removed 'status'
         $transaction = Transaction::with(['user', 'items.category', 'paymentMethod'])
             ->findOrFail($id); 
 
@@ -99,7 +99,7 @@ class SalesController extends Controller
 
     public function getAvailableItems()
     {
-        // Removed 'status' relationship
+        // Removed 'status'
         $items = Item::where('is_sold', false)
             ->with(['category', 'bale'])
             ->get();

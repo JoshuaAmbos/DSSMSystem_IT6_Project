@@ -82,6 +82,14 @@ class SampleDataSeeder extends Seeder
             ],
         ];
 
+        $yesterdayTransactions = [
+             [
+                'items_count' => 4,
+                'method_id' => 2,
+                'cashier_id' => $users->first()->id,
+            ],
+        ];
+
         foreach ($todayTransactions as $txnData) {
             $items = Item::where('is_sold', false)->take($txnData['items_count'])->get();
 
@@ -102,8 +110,32 @@ class SampleDataSeeder extends Seeder
                     'subtotal' => $item->price,
                 ]);
                 
-                // The after_sale_deduct_inventory trigger will now 
-                // handle setting is_sold to true automatically!
+                // The after_sale_deduct_inventory triggger handles is_sold
+            }
+        }
+
+        foreach ($yesterdayTransactions as $txnData) {
+            $items = Item::where('is_sold', false)->take($txnData['items_count'])->get();
+
+            if ($items->isEmpty()) continue;
+
+            $transaction = Transaction::create([
+                'user_id' => $txnData['cashier_id'],
+                'transaction_number' => Transaction::generateTransactionNumber(),
+                'subtotal' => 0,
+                'total_amount' => 0,
+                'method_id' => $txnData['method_id'],
+                'created_at' => Carbon::yesterday()
+            ]);
+
+            foreach ($items as $item) {
+                $transaction->items()->attach($item->id, [
+                    'quantity' => 1,
+                    'unit_price' => $item->price,
+                    'subtotal' => $item->price,
+                ]);
+                
+                // The after_sale_deduct_inventory triggger handles is_sold
             }
         }
 

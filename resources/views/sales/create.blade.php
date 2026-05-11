@@ -105,5 +105,6 @@
                 updateCart();
             }
         </script>
+
     @endpush
 @endsection

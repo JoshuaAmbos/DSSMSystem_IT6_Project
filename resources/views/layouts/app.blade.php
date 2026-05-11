@@ -122,7 +122,7 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <nav class="sidebar shadow-lg p-3" id="sidebar">
-            <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-secondary mb-3">
+            <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-secondary mb-1">
                 <div class="text-center w-100">
                     <h4 class="mb-0 fw-bold text-white">DSSM</h4>
                     <small class="text-white-50">Daily Sales & Stock-In</small>
