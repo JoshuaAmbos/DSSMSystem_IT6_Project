@@ -53,3 +53,4 @@ Daily Transaction Receipt View - DONE
 
 ## FINAL CHECKING REVISION
 Separate pricing of items from bale stock-in process.
+Gcash ref. number
